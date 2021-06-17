@@ -1,0 +1,33 @@
+﻿**** V E N D I N G   M A C H I N E           ****
+**** I M P L E M E N T A T I O N   N O T E S ****
+
+The description of the task didn't include a lot of details, so I had to make
+some design choices and assumptions. I'll detail them in this document.
+
+I figured that a typical vending machine has many items of the same type.
+That's why I decided to have items of the same type grouped into a wrapper
+with information on the quantity.
+
+If the vending machine has A LOT of items, then a different data structure
+than a list could be more efficient. But I'm assuming that the typical vending
+machine has a few dozen different item types, for which the list is more than
+efficient enough. Likewise, in a larger system it might've been beneficial
+to have an ID for the different items for comparison, stored in a database etc.
+Because of the simplicity of this system and a typical vending machine, I 
+settled for just comparing properties when checking for quality.
+
+The task description did not specify any requirements for the different item
+types (food, drinks, weapons). Due to this, even just one Item class with a
+Category field would have satisfied the requirements. However I assumed that
+eventually, at a later stage, the developers would want the different item
+types to have different properties (for example, a food item could have a
+property for calories). So I made different classes for the item categories
+for future extensibility.
+
+I thought of making the Buy method more complex in a way that it allowed
+buying multiple items of the same type at once. But, thinking about the domain,
+I don't think I've seen a real-life vending machine that would allow buying more
+than a single item at a time. So I made a simple buy method that can only be
+used to buy a single item.
+
+The vending machine should be thread-safe with a simple lock implementation.
