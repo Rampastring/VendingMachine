@@ -1,5 +1,4 @@
-﻿**** V E N D I N G   M A C H I N E           ****
-**** I M P L E M E N T A T I O N   N O T E S ****
+﻿# Vending machine implementation notes
 
 The description of the task didn't include a lot of details, so I had to make
 some design choices and assumptions. I'll detail them in this document.
@@ -34,4 +33,21 @@ I don't think I've seen a real-life vending machine that would allow buying more
 than a single item at a time. So I made a simple buy method that can only be
 used to buy a single item.
 
-The vending machine should be thread-safe with a simple lock implementation.
+I made the vending machine keep its items sorted by category and price.
+
+I assumed that there is no reason for the vending machine to ever have a negative
+quantity of a specific item. I enforced this with checks. An alternative would've
+been using unsigned integer types, but I felt that checks and documentation were clearer.
+
+Unit test methods were roughly named after <Method-to-test>_<Cause>_<Effect>.
+
+The vending machine should be safe to use with multiple threads at once,
+with a simple lock implementation.
+
+## Unit tests for logging
+
+It would've been possible to implement unit tests for the logging part of the
+vending machine library with the popular Moq framework (I'm familiar with it
+from previous work). But doing it now would've taken just a bit too much time.
+There's a very brief demonstration of logging injection in the 
+VendingMachineConsole test console project.
