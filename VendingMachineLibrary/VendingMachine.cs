@@ -36,6 +36,8 @@ namespace VendingMachineLibrary
         /// If the vending machine already has the item listed, then adds one to the quantity of the item.
         /// </summary>
         /// <param name="item">The item to add to the vending machine.</param>
+        /// <exception cref="ArgumentNullException">If the given item is null.</exception>
+        /// <exception cref="OverflowException">If the quantity calculation would overflow.</exception>
         public void AddItem(Item item)
         {
             AddItems(item, 1);
@@ -47,10 +49,16 @@ namespace VendingMachineLibrary
         /// <param name="item">The type of the items to add.</param>
         /// <param name="quantity">The quantity of items to add. Must be non-negative.
         /// If you want to remove items instead, use <see cref="ReduceQuantity(Item, int)"/>.</param>
+        /// <exception cref="ArgumentNullException">If the given item is null.</exception>
         /// <exception cref="ArgumentException">If the given quantity is negative.</exception>
-        /// <remarks>Does not change the quantity of the item if the quantity calculation would overflow.</remarks>
+        /// <exception cref="OverflowException">If the quantity calculation would overflow.</exception>
         public void AddItems(Item item, int quantity)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             if (quantity < 0)
             {
                 throw new ArgumentException("Quantity must be non-negative.");
@@ -67,17 +75,7 @@ namespace VendingMachineLibrary
                 }
                 else
                 {
-                    int newQuantity = existing.Quantity;
-                    try
-                    {
-                        newQuantity += checked(existing.Quantity + quantity);
-                    }
-                    catch (OverflowException)
-                    {
-                        Log($"Integer overflow when restocking items in vending machine. " +
-                            $"Item '{item}', current quantity {existing.Quantity}, attempted add {quantity}", LogLevel.Critical);
-                        return;
-                    }
+                    int newQuantity = checked(existing.Quantity + quantity);
 
                     existing.Quantity = newQuantity;
 
@@ -92,8 +90,14 @@ namespace VendingMachineLibrary
         /// </summary>
         /// <param name="item">The type of the items to remove.</param>
         /// <returns>True if removing the items was successful, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given item is null.</exception>
         public bool RemoveItem(Item item)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             lock (_locker)
             {
                 int index = _catalogue.FindIndex(e => e.Item.Equals(item));
@@ -115,11 +119,17 @@ namespace VendingMachineLibrary
         /// <param name="item">The type of the item to reduce the quantity of.</param>
         /// <param name="quantity">The number of items that will be removed. Must be non-negative.</param>
         /// <returns>True if reducing the quantity of the item was successful, false otherwise.</returns>
+        /// <exception cref="ArgumentNullException">If the given item is null.</exception>
         /// <exception cref="ArgumentException">If the given quantity is negative.</exception>
         /// <remarks>Sets the quantity for the item to zero if it would be reduced to negative. 
         /// Does not remove the item even if its quantity reached zero; for removing items, use <see cref="RemoveItem(Item)"/> instead.</remarks>
         public bool ReduceQuantity(Item item, int quantity)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             if (quantity < 0)
             {
                 throw new ArgumentException("Quantity must be non-negative.");
@@ -139,6 +149,7 @@ namespace VendingMachineLibrary
                 {
                     Log($"Quantity for '{item}' reduced to negative ({entry.Quantity}; " +
                         $"was reduced by {quantity}). Setting quantity to zero.", LogLevel.Warning);
+                    entry.Quantity = 0;
                 }
                 else
                 {
@@ -183,6 +194,11 @@ namespace VendingMachineLibrary
         /// <remarks>If buying the item fails, log entries will more information.</remarks>
         public bool Buy(Item item, int money)
         {
+            if (item == null)
+            {
+                throw new ArgumentNullException(nameof(item));
+            }
+
             lock (_locker)
             {
                 var entry = FindItem(item);

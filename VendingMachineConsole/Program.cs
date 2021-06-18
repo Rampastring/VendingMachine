@@ -6,6 +6,9 @@ using VendingMachineLibrary.Logging;
 
 namespace VendingMachineConsole
 {
+    /// <summary>
+    /// A simple console application for testing the vending machine.
+    /// </summary>
     class Program
     {
         static void Main(string[] args)
@@ -34,6 +37,10 @@ namespace VendingMachineConsole
 
             vendingMachine.RemoveItem(reindeerMeatItem);
             PrintCatalogue(vendingMachine.GetCatalogue());
+
+            vendingMachine.ClearLoggers();
+            vendingMachine.AddLogger(new AmazingCustomLogger());
+            vendingMachine.RemoveItem(new WeaponItem("AK-47", 100));
         }
 
         static void PrintCatalogue(List<VendingMachineEntry> catalogue)
