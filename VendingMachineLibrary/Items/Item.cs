@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Items
+﻿namespace VendingMachineLibrary.Items
 {
     /// <summary>
     /// Abstract base class for all vending machine items.
@@ -17,7 +17,7 @@
 
         public override string ToString()
         {
-            return $"Item: {Name}, price: {Price}, category: {Category}";
+            return $"{Name}, price: {Price}, category: {Category}";
         }
 
         public override bool Equals(object obj)

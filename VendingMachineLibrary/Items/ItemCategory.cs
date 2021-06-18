@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Items
+﻿namespace VendingMachineLibrary.Items
 {
     /// <summary>
     /// Defines the possible categories of vending machine items.

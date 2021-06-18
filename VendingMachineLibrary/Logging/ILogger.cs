@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Logging
+﻿namespace VendingMachineLibrary.Logging
 {
     /// <summary>
     /// Interface for a logger.

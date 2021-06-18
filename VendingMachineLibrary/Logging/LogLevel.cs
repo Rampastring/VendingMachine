@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Logging
+﻿namespace VendingMachineLibrary.Logging
 {
     /// <summary>
     /// Defines different log levels.

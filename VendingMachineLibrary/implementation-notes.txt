@@ -11,7 +11,11 @@ with information on the quantity.
 If the vending machine has A LOT of items, then a different data structure
 than a list could be more efficient. But I'm assuming that the typical vending
 machine has a few dozen different item types, for which the list is more than
-efficient enough. Likewise, in a larger system it might've been beneficial
+efficient enough. With a more complex implementation it might've also been
+beneficial for code maintainability to create a wrapper class for the
+data structure.
+
+Likewise, in a larger system it might've been beneficial
 to have an ID for the different items for comparison, stored in a database etc.
 Because of the simplicity of this system and a typical vending machine, I 
 settled for just comparing properties when checking for quality.

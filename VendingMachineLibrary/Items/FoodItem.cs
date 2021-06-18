@@ -1,15 +1,15 @@
-﻿namespace VendingMachine.Items
+﻿namespace VendingMachineLibrary.Items
 {
     /// <summary>
-    /// A drink item for the vending machine.
+    /// A food item for the vending machine.
     /// </summary>
-    public class DrinkItem : Item
+    public class FoodItem : Item
     {
-        public DrinkItem(string name, int price) : base(name, price)
+        public FoodItem(string name, int price) : base(name, price)
         {
         }
 
-        public override ItemCategory Category => ItemCategory.Drink;
+        public override ItemCategory Category => ItemCategory.Food;
 
         public override bool Equals(object obj)
         {

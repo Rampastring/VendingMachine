@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using VendingMachine.Items;
-using VendingMachine.Logging;
+using System.Linq;
+using VendingMachineLibrary.Items;
+using VendingMachineLibrary.Logging;
 
-namespace VendingMachine
+namespace VendingMachineLibrary
 {
     /*
     • Vending machine has a catalogue of items
@@ -24,7 +25,7 @@ namespace VendingMachine
     /// </summary>
     public class VendingMachine
     {
-        private List<ILogger> _loggers = new List<ILogger>(0);
+        private readonly List<ILogger> _loggers = new List<ILogger>(0);
 
         private List<VendingMachineEntry> _catalogue = new List<VendingMachineEntry>();
 
@@ -61,7 +62,8 @@ namespace VendingMachine
                 if (existing == null)
                 {
                     _catalogue.Add(new VendingMachineEntry(item, quantity));
-                    Log($"Added new item to vending machine: {item}, quantity {quantity}", LogLevel.Info);
+                    _catalogue = _catalogue.OrderBy(entry => entry.Item.Category).ThenBy(entry => entry.Item.Price).ToList();
+                    Log($"Added new item to vending machine: '{item}', quantity {quantity}", LogLevel.Info);
                 }
                 else
                 {
@@ -73,13 +75,13 @@ namespace VendingMachine
                     catch (OverflowException)
                     {
                         Log($"Integer overflow when restocking items in vending machine. " +
-                            $"Item {item}, current quantity {existing.Quantity}, attempted add {quantity}", LogLevel.Critical);
+                            $"Item '{item}', current quantity {existing.Quantity}, attempted add {quantity}", LogLevel.Critical);
                         return;
                     }
 
                     existing.Quantity = newQuantity;
 
-                    Log($"Changed stock of existing item in vending machine: {item}, " +
+                    Log($"Changed stock of existing item in vending machine: '{item}', " +
                         $"added quantity {quantity}, total new quantity {existing.Quantity}", LogLevel.Info);
                 }
             }
@@ -94,15 +96,15 @@ namespace VendingMachine
         {
             lock (_locker)
             {
-                int index = _catalogue.FindIndex(e => e.Item == item);
+                int index = _catalogue.FindIndex(e => e.Item.Equals(item));
                 if (index > -1)
                 {
                     _catalogue.RemoveAt(index);
-                    Log("Removed item from vending machine: " + item, LogLevel.Info);
+                    Log($"Removed item from vending machine: '{item}'", LogLevel.Info);
                     return true;
                 }
 
-                Log("Cannot find item to remove from vending machine: " + item, LogLevel.Warning);
+                Log($"Cannot find item to remove from vending machine: '{item}'", LogLevel.Warning);
                 return false;
             }
         }
@@ -135,12 +137,12 @@ namespace VendingMachine
                 entry.Quantity -= quantity;
                 if (entry.Quantity < 0)
                 {
-                    Log($"Quantity for {item} reduced to negative ({entry.Quantity}; " +
-                        $"was reduced by {quantity}. Setting quantity to zero.", LogLevel.Warning);
+                    Log($"Quantity for '{item}' reduced to negative ({entry.Quantity}; " +
+                        $"was reduced by {quantity}). Setting quantity to zero.", LogLevel.Warning);
                 }
                 else
                 {
-                    Log($"Quantity for {item} reduced by {quantity} to {entry.Quantity}. ", LogLevel.Info);
+                    Log($"Quantity for '{item}' reduced by {quantity} to {entry.Quantity}. ", LogLevel.Info);
                 }
 
                 return true;
@@ -186,7 +188,7 @@ namespace VendingMachine
                 var entry = FindItem(item);
                 if (entry == null)
                 {
-                    Log($"Item {item} does not exist in the vending machine!", LogLevel.Warning);
+                    Log($"Item '{item}' does not exist in the vending machine!", LogLevel.Warning);
                     return false;
                 }
 
@@ -205,7 +207,7 @@ namespace VendingMachine
                 }
 
                 entry.Quantity--;
-                Log($"Item bought: {item}", LogLevel.Info);
+                Log($"Item bought: '{item}'", LogLevel.Info);
                 return true;
             }
         }
@@ -246,7 +248,7 @@ namespace VendingMachine
 
         private VendingMachineEntry FindItem(Item item)
         {
-            return _catalogue.Find(entry => entry.Item == item);
+            return _catalogue.Find(entry => entry.Item.Equals(item));
         }
     }
 }

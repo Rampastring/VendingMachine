@@ -1,4 +1,4 @@
-﻿namespace VendingMachine.Items
+﻿namespace VendingMachineLibrary.Items
 {
     /// <summary>
     /// A weapon item for the vending machine.
